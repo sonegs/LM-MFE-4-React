@@ -5,7 +5,7 @@ interface CompanyContext {
     setNewCompany: (value: string) => void;
 }
 
-// Componente en el que inyecto el contexto
+// Componente en el que se inyecta el contexto
 export const MyContext = React.createContext<CompanyContext>({
     newCompany: "",
     setNewCompany: (value) => { },

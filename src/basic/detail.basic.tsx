@@ -33,7 +33,6 @@ export const BasicDetailPage: React.FC = (props) => {
       .then((response) => response.json())
       .then((json) => setMember(json));
   }, []);
-  console.log(member);
   return (
     <>
       <h2>Hello from Detail page</h2>

@@ -7,12 +7,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Input from '@material-ui/core/Input'
-import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
+import Button from '@material-ui/core/Button';
+import TextField from "@material-ui/core/TextField";
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from "@material-ui/core/FormHelperText";
-import InputLabel from "@material-ui/core/InputLabel";
+
 
 interface MemberEntity {
   id: string;
@@ -24,7 +22,7 @@ interface CompanyContext {
   setNewCompany: (value: string) => void;
 }
 
-// Componente en el que inyecto el contexto
+// Componente en el que se inyecta el contexto
 const MyContext = React.createContext<CompanyContext>({
   newCompany: "",
   setNewCompany: (value) => { },
@@ -48,7 +46,7 @@ export const BasicListPage: React.FC = (props) => {
   const { newCompany, setNewCompany } = React.useContext(MyContext);
   const [company, setCompany] = React.useState(newCompany);
 
-  const handleFilter = (e) => {
+  const handleFilter = e => {
     e.preventDefault();
     setNewCompany(company);
   };
@@ -63,14 +61,24 @@ export const BasicListPage: React.FC = (props) => {
 
   return (
     <>
-      <form onSubmit={handleFilter}>
-        <input
+      <Link to={generatePath('/advance/list')}>
+        <Button variant="contained" color="primary">
+          Rick and Morty Exercise </Button>
+      </Link>
+      <FormControl onSubmit={handleFilter} style={{ display: 'flex', alignItems: 'center' }}>
+        <TextField
           type="text"
           value={company}
+          id="filled-basic" label="Company" variant="filled"
+          style={{ width: '300px' }}
           onChange={(e) => setCompany(e.target.value)}
         />
-        <button type="submit">Buscar</button>
-      </form>
+        <Button
+          style={{ width: '300px' }}
+          variant="contained"
+          color="primary"
+          type="submit">Buscar</Button>
+      </FormControl>
       <TableContainer>
         <Table>
           <TableHead>
@@ -83,13 +91,13 @@ export const BasicListPage: React.FC = (props) => {
           <TableBody>
             {members.map((member) => (
               <TableRow key={member.id}>
-                <TableCell align="right">
-                  <img src={member.avatar_url} style={{ width: "5rem" }} />
+                <TableCell align="right" width="20%">
+                  <img src={member.avatar_url} width="5rem" />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" width="50%">
                   <span>{member.id}</span>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" width="30%">
                   <span><Link to={generatePath('/basic/detail/:id', { id: member.login })}>{member.login}</Link></span>
                 </TableCell>
               </TableRow>

@@ -6,42 +6,52 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Input from '@material-ui/core/Input'
-import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
+import TextField from "@material-ui/core/TextField";
+import Button from '@material-ui/core/Button';
 
-interface MemberEntity {
-  id: string;
-  login: string;
-  avatar_url: string;
+import { useDebounce } from "use-debounce";
+
+const useUserCollection = () => {
+
+  const [filter, setFilter] = React.useState("");
+  const [userCollection, setUserCollection] = React.useState([]);
+
+  const [debounceFilter] = useDebounce(filter, 500);
+
+  React.useEffect(() => {
+    fetch(`https://rickandmortyapi.com/api/character?name=${filter}`)
+      .then(response => response.json())
+      .then(json => setUserCollection(json.results ? json.results : []));
+  }, [debounceFilter]) // delay 500 mls
+
+  return { filter, setFilter, userCollection }
 }
 
-export const AdvanceListPage: React.FC = () => {
+export const AdvanceListPage = () => {
 
-  const [org, setOrg] = React.useState('Lemoncode');
-  const [members, setMembers] = React.useState<MemberEntity[]>([]);
+  const { filter, setFilter, userCollection } = useUserCollection();
 
-
-  // cargamos los datos
-
-  const orgFilter = () => {
-    fetch(`https://api.github.com/orgs/${org}/members`)
-      .then((response) => response.json())
-      .then((json) => setMembers(json));
-  }
-
-  React.useEffect(() => { orgFilter() }, []);
   return (
     <TableContainer>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell align="right">Organization</TableCell>
+            <TableCell align="right">
+              <Link to={generatePath('/')}>
+                <Button variant="contained" color="primary">
+                  Return to the basic exercise
+                </Button>
+              </Link>
+            </TableCell>
             <TableCell align="center">
-              <Input autoFocus={true} value={org} onChange={e => setOrg(e.target.value)} />
-              <IconButton key={1} onClick={() => orgFilter()}>
-                <SearchIcon />
-              </IconButton>
+              <TextField
+                autoFocus={true}
+                type="text"
+                value={filter}
+                id="filled-basic" label="Character" variant="filled"
+                style={{ width: '300px' }}
+                onChange={(e) => setFilter(e.target.value)}
+              />
             </TableCell>
             <TableCell align="right"> Author: Miguel Cobo
             </TableCell>
@@ -53,22 +63,27 @@ export const AdvanceListPage: React.FC = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* {members.map((member) => (
-            <TableRow key={member.id}>
+          {userCollection.map((user, index) => (
+            <TableRow key={index}>
               <TableCell align="right">
-                <img src={member.avatar_url} style={{ width: "5rem" }} />
+                <img src={user.image} width="80px" />
               </TableCell>
               <TableCell align="right">
-                <span>{member.id}</span>
+                <span>{index}</span>
               </TableCell>
               <TableCell align="right">
-                <span><Link to={generatePath('/detail/:id', { id: member.login })}>{member.login}</Link></span>
+                <span>
+                  <Link
+                    to={generatePath('/advance/detail/:id', { id: user.id })}
+                    style={{ fontSize: "18px" }}>
+                    {user.name}
+                  </Link>
+                </span>
               </TableCell>
             </TableRow>
-          ))} */}
+          ))}
         </TableBody>
       </Table>
     </TableContainer>
-
   );
 };
