@@ -11,3 +11,13 @@ export const MyContext = React.createContext<CompanyContext>({
     setNewCompany: (value) => { },
 });
 
+
+// Contexto. Lo meto dentro de MyContext
+export const MyContextComponent: React.FC = (props) => {
+    const [newCompany, setNewCompany] = React.useState("Lemoncode");
+    return (
+        <MyContext.Provider value={{ newCompany, setNewCompany }}>
+            {props.children}
+        </MyContext.Provider>
+    )
+};

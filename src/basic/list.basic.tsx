@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, generatePath } from 'react-router-dom';
+import { MyContext } from './context.basic';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -17,31 +18,9 @@ interface MemberEntity {
   login: string;
   avatar_url: string;
 }
-interface CompanyContext {
-  newCompany: string;
-  setNewCompany: (value: string) => void;
-}
-
-// Componente en el que se inyecta el contexto
-const MyContext = React.createContext<CompanyContext>({
-  newCompany: "",
-  setNewCompany: (value) => { },
-});
-
-// Contexto. Lo meto dentro de MyContext
-export const MyContextComponent: React.FC = (props) => {
-  const [newCompany, setNewCompany] = React.useState("Lemoncode");
-  return (
-    <MyContext.Provider value={{ newCompany, setNewCompany }}>
-      {props.children}
-    </MyContext.Provider>
-  )
-};
-
 
 export const BasicListPage: React.FC = (props) => {
 
-  const filterContext = React.useContext(MyContext);
   const [members, setMembers] = React.useState<MemberEntity[]>([]);
   const { newCompany, setNewCompany } = React.useContext(MyContext);
   const [company, setCompany] = React.useState(newCompany);
@@ -53,11 +32,11 @@ export const BasicListPage: React.FC = (props) => {
 
   // cargamos los datos
   React.useEffect(() => {
-    console.log(filterContext.newCompany)
-    fetch(`https://api.github.com/orgs/${filterContext.newCompany}/members`)
+    console.log(newCompany)
+    fetch(`https://api.github.com/orgs/${newCompany}/members`)
       .then((response) => response.json())
       .then((json) => setMembers(json));
-  }, [filterContext]);
+  }, [newCompany]);
 
   return (
     <>
@@ -65,20 +44,22 @@ export const BasicListPage: React.FC = (props) => {
         <Button variant="contained" color="primary">
           Rick and Morty Exercise </Button>
       </Link>
-      <FormControl onSubmit={handleFilter} style={{ display: 'flex', alignItems: 'center' }}>
-        <TextField
-          type="text"
-          value={company}
-          id="filled-basic" label="Company" variant="filled"
-          style={{ width: '300px' }}
-          onChange={(e) => setCompany(e.target.value)}
-        />
-        <Button
-          style={{ width: '300px' }}
-          variant="contained"
-          color="primary"
-          type="submit">Buscar</Button>
-      </FormControl>
+      <form onSubmit={handleFilter}>
+        <FormControl style={{ display: 'flex', alignItems: 'center' }}>
+          <TextField
+            type="text"
+            value={company}
+            id="filled-basic" label="Company" variant="filled"
+            style={{ width: '300px' }}
+            onChange={(e) => setCompany(e.target.value)}
+          />
+          <Button
+            style={{ width: '300px' }}
+            variant="contained"
+            color="primary"
+            type="submit">Buscar</Button>
+        </FormControl>
+      </form>
       <TableContainer>
         <Table>
           <TableHead>
@@ -92,7 +73,7 @@ export const BasicListPage: React.FC = (props) => {
             {members.map((member) => (
               <TableRow key={member.id}>
                 <TableCell align="right" width="20%">
-                  <img src={member.avatar_url} width="5rem" />
+                  <img src={member.avatar_url} width="80px" />
                 </TableCell>
                 <TableCell align="right" width="50%">
                   <span>{member.id}</span>

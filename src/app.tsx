@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { BasicListPage, MyContextComponent } from "./basic/list.basic";
+import { BasicListPage } from "./basic/list.basic";
+import { MyContextComponent } from "./basic/context.basic";
 import { BasicDetailPage } from "./basic/detail.basic";
 import { AdvanceListPage } from "./advance/list.advance";
 import { AdvanceDetailPage } from "./advance/detail.advance";
